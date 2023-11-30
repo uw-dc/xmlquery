@@ -492,7 +492,7 @@ func TestStreamParser_Success2(t *testing.T) {
 		<CCC>c2</CCC>
 	</AAA>`
 
-	sp, err := CreateStreamParser(strings.NewReader(s), "/AAA/CCC | /AAA/DDD")
+	sp, err := CreateStreamParser(strings.NewReader(s), "//Objects/*[namespace-uri()=\"http://example.com/schema/2007/someschema\" and local-name()=\"Object\"]")
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -527,6 +527,71 @@ func TestStreamParser_Success2(t *testing.T) {
 	if err != io.EOF {
 		t.Fatalf("io.EOF expected, but got %v", err)
 	}
+}
+
+func TestStreamParser_DefaultNamespace(t *testing.T) {
+	s := `
+	<Objects xmlns="http://example.com/schema/2007/someschema">
+		<Object>
+			<SourceInformation>
+				<Provider Name="Object Provider" Guid="{3CB2A168-FE19-4A4E-BDAD-DCF422F13473}"/>
+				<ObjectType>4663</ObjectType>
+			</SourceInformation>
+			<ObjectData>
+				<Data Name="ObjectId">ObjectA</Data>
+				<Data Name="ObjectName">ROFL</Data>
+			</ObjectData>
+		</Object>
+		<Object>
+			<SourceInformation>
+				<Provider Name="Object Provider" Guid="{3CB2A168-FE19-4A4E-BDAD-DCF422F13473}"/>
+				<ObjectType>4663</ObjectType>
+			</SourceInformation>
+			<ObjectData>
+				<Data Name="ObjectId">ObjectB</Data>
+				<Data Name="ObjectName">TASTIC</Data>
+			</ObjectData>
+		</Object>
+		<Object>
+			<SourceInformation>
+				<Provider Name="Object Provider" Guid="{3CB2A168-FE19-4A4E-BDAD-DCF422F13473}"/>
+				<ObjectType>4663</ObjectType>
+			</SourceInformation>
+			<ObjectData>
+				<Data Name="ObjectId">ObjectC</Data>
+				<Data Name="ObjectName">LMAO</Data>
+			</ObjectData>
+		</Object>
+	</Objects>`
+
+	sp, err := CreateStreamParser(strings.NewReader(s), "//Objects/*[namespace-uri()=\"http://example.com/schema/2007/someschema\" and local-name()=\"Object\"]")
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+
+	n, err := sp.Read()
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+
+	var x = `<Object><SourceInformation><Provider Name="Object Provider" Guid="{3CB2A168-FE19-4A4E-BDAD-DCF422F13473}"></Provider><ObjectType>4663</ObjectType></SourceInformation><ObjectData><Data Name="ObjectId">ObjectA</Data><Data Name="ObjectName">ROFL</Data></ObjectData></Object>`
+	testOutputXML(t, "first call result", x, n)
+
+	n, err = sp.Read()
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+
+	x = `<Object><SourceInformation><Provider Name="Object Provider" Guid="{3CB2A168-FE19-4A4E-BDAD-DCF422F13473}"></Provider><ObjectType>4663</ObjectType></SourceInformation><ObjectData><Data Name="ObjectId">ObjectB</Data><Data Name="ObjectName">TASTIC</Data></ObjectData></Object>`
+	testOutputXML(t, "second call result", x, n)
+
+	n, err = sp.Read()
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+
+	x = `<Object><SourceInformation><Provider Name="Object Provider" Guid="{3CB2A168-FE19-4A4E-BDAD-DCF422F13473}"></Provider><ObjectType>4663</ObjectType></SourceInformation><ObjectData><Data Name="ObjectId">ObjectC</Data><Data Name="ObjectName">LMAO</Data></ObjectData></Object>`
+	testOutputXML(t, "third call result", x, n)
 }
 
 func TestCDATA(t *testing.T) {
