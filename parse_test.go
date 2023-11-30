@@ -492,7 +492,7 @@ func TestStreamParser_Success2(t *testing.T) {
 		<CCC>c2</CCC>
 	</AAA>`
 
-	sp, err := CreateStreamParser(strings.NewReader(s), "//Objects/*[namespace-uri()=\"http://example.com/schema/2007/someschema\" and local-name()=\"Object\"]")
+	sp, err := CreateStreamParser(strings.NewReader(s), "/AAA/CCC | /AAA/DDD")
 	if err != nil {
 		t.Fatal(err.Error())
 	}
