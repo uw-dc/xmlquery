@@ -146,7 +146,6 @@ func TestAttributesNamespaces(t *testing.T) {
 	}
 	got := fmt.Sprintf("%v", parsed)
 
-	// unsure if 5 should be selected here
 	if got != "[2 3]" {
 		t.Fatalf("Expected tags [2 3], got %v", got)
 	}
