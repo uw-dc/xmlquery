@@ -152,6 +152,53 @@ func TestAttributesNamespaces(t *testing.T) {
 	}
 }
 
+func TestElementsNamespaceWithoutPrefix(t *testing.T) {
+	doc := loadXML(`
+	<Objects xmlns="http://example.com/schema/2007/someschema">
+		<Object>
+			<SourceInformation>
+				<Provider Name="Object Provider" Guid="{3CB2A168-FE19-4A4E-BDAD-DCF422F13473}"/>
+				<ObjectType>4663</ObjectType>
+			</SourceInformation>
+			<ObjectData>
+				<Data Name="ObjectId">ObjectA</Data>
+				<Data Name="ObjectName">ROFL</Data>
+			</ObjectData>
+		</Object>
+		<Object>
+			<SourceInformation>
+				<Provider Name="Object Provider" Guid="{3CB2A168-FE19-4A4E-BDAD-DCF422F13473}"/>
+				<ObjectType>4663</ObjectType>
+			</SourceInformation>
+			<ObjectData>
+				<Data Name="ObjectId">ObjectB</Data>
+				<Data Name="ObjectName">TASTIC</Data>
+			</ObjectData>
+		</Object>
+		<Object>
+			<SourceInformation>
+				<Provider Name="Object Provider" Guid="{3CB2A168-FE19-4A4E-BDAD-DCF422F13473}"/>
+				<ObjectType>4663</ObjectType>
+			</SourceInformation>
+			<ObjectData>
+				<Data Name="ObjectId">ObjectC</Data>
+				<Data Name="ObjectName">LMAO</Data>
+			</ObjectData>
+		</Object>
+	</Objects>
+	`)
+	results := Find(doc, "//Objects/*[namespace-uri()=\"http://example.com/schema/2007/someschema\" and local-name()=\"Object\"]/ObjectData/Data[@Name=\"ObjectId\"]")
+	parsed := make([]string, 0, 5)
+	for _, tag := range results {
+		parsed = append(parsed, tag.InnerText() /*tag.SelectAttr("id")*/)
+	}
+	got := fmt.Sprintf("%v", parsed)
+
+	if got != "[ObjectA ObjectB ObjectC]" {
+		t.Fatalf("Expected data [ObjectA ObjectB ObjectC], got %v", got)
+	}
+}
+
 func loadXML(s string) *Node {
 	node, err := Parse(strings.NewReader(s))
 	if err != nil {
@@ -161,12 +208,12 @@ func loadXML(s string) *Node {
 }
 
 func TestMissingTextNodes(t *testing.T) {
-    doc := loadXML(`
+	doc := loadXML(`
         <?xml version="1.0" encoding="utf-8"?>
         <corpus><p>Lorem <a>ipsum</a> dolor</p></corpus>
     `)
-    results := Find(doc, "//text()")
-    if len(results) != 3 {
-        t.Fatalf("Expected text nodes 3, got %d", len(results))
-    }
+	results := Find(doc, "//text()")
+	if len(results) != 3 {
+		t.Fatalf("Expected text nodes 3, got %d", len(results))
+	}
 }
