@@ -152,7 +152,7 @@ func TestAttributesNamespaces(t *testing.T) {
 	}
 }
 
-func TestElementsNamespaceWithoutPrefix(t *testing.T) {
+func TestDefaultNamespace(t *testing.T) {
 	doc := loadXML(`
 	<Objects xmlns="http://example.com/schema/2007/someschema">
 		<Object>
