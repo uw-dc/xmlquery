@@ -532,36 +532,9 @@ func TestStreamParser_Success2(t *testing.T) {
 func TestStreamParser_DefaultNamespace(t *testing.T) {
 	s := `
 	<Objects xmlns="http://example.com/schema/2007/someschema">
-		<Object>
-			<SourceInformation>
-				<Provider Name="Object Provider" Guid="{3CB2A168-FE19-4A4E-BDAD-DCF422F13473}"/>
-				<ObjectType>4663</ObjectType>
-			</SourceInformation>
-			<ObjectData>
-				<Data Name="ObjectId">ObjectA</Data>
-				<Data Name="ObjectName">ROFL</Data>
-			</ObjectData>
-		</Object>
-		<Object>
-			<SourceInformation>
-				<Provider Name="Object Provider" Guid="{3CB2A168-FE19-4A4E-BDAD-DCF422F13473}"/>
-				<ObjectType>4663</ObjectType>
-			</SourceInformation>
-			<ObjectData>
-				<Data Name="ObjectId">ObjectB</Data>
-				<Data Name="ObjectName">TASTIC</Data>
-			</ObjectData>
-		</Object>
-		<Object>
-			<SourceInformation>
-				<Provider Name="Object Provider" Guid="{3CB2A168-FE19-4A4E-BDAD-DCF422F13473}"/>
-				<ObjectType>4663</ObjectType>
-			</SourceInformation>
-			<ObjectData>
-				<Data Name="ObjectId">ObjectC</Data>
-				<Data Name="ObjectName">LMAO</Data>
-			</ObjectData>
-		</Object>
+		<Object id="ObjectA">ObjectA</Object>
+		<Object id="ObjectB">ObjectB</Object>
+		<Object id="ObjectC">ObjectD</Object>
 	</Objects>`
 
 	sp, err := CreateStreamParser(strings.NewReader(s), "//Objects/*[namespace-uri()=\"http://example.com/schema/2007/someschema\" and local-name()=\"Object\"]")
@@ -574,7 +547,7 @@ func TestStreamParser_DefaultNamespace(t *testing.T) {
 		t.Fatal(err.Error())
 	}
 
-	var x = `<Object><SourceInformation><Provider Name="Object Provider" Guid="{3CB2A168-FE19-4A4E-BDAD-DCF422F13473}"></Provider><ObjectType>4663</ObjectType></SourceInformation><ObjectData><Data Name="ObjectId">ObjectA</Data><Data Name="ObjectName">ROFL</Data></ObjectData></Object>`
+	var x = `<Object id="ObjectA">ObjectA</Object>`
 	testOutputXML(t, "first call result", x, n)
 
 	n, err = sp.Read()
@@ -582,7 +555,7 @@ func TestStreamParser_DefaultNamespace(t *testing.T) {
 		t.Fatal(err.Error())
 	}
 
-	x = `<Object><SourceInformation><Provider Name="Object Provider" Guid="{3CB2A168-FE19-4A4E-BDAD-DCF422F13473}"></Provider><ObjectType>4663</ObjectType></SourceInformation><ObjectData><Data Name="ObjectId">ObjectB</Data><Data Name="ObjectName">TASTIC</Data></ObjectData></Object>`
+	x = `<Object id="ObjectB">ObjectB</Object>`
 	testOutputXML(t, "second call result", x, n)
 
 	n, err = sp.Read()
@@ -590,7 +563,7 @@ func TestStreamParser_DefaultNamespace(t *testing.T) {
 		t.Fatal(err.Error())
 	}
 
-	x = `<Object><SourceInformation><Provider Name="Object Provider" Guid="{3CB2A168-FE19-4A4E-BDAD-DCF422F13473}"></Provider><ObjectType>4663</ObjectType></SourceInformation><ObjectData><Data Name="ObjectId">ObjectC</Data><Data Name="ObjectName">LMAO</Data></ObjectData></Object>`
+	x = `<Object id="ObjectC">ObjectD</Object>`
 	testOutputXML(t, "third call result", x, n)
 }
 
