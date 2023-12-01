@@ -162,7 +162,7 @@ func TestDefaultNamespace(t *testing.T) {
 	results := Find(doc, "//Objects/*[namespace-uri()=\"http://example.com/schema/2007/someschema\" and local-name()=\"Object\"]")
 	parsed := make([]string, 0, 5)
 	for _, tag := range results {
-		parsed = append(parsed, tag.InnerText() /*tag.SelectAttr("id")*/)
+		parsed = append(parsed, tag.InnerText())
 	}
 	got := fmt.Sprintf("%v", parsed)
 
