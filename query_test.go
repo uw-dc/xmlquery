@@ -154,39 +154,12 @@ func TestAttributesNamespaces(t *testing.T) {
 func TestDefaultNamespace(t *testing.T) {
 	doc := loadXML(`
 	<Objects xmlns="http://example.com/schema/2007/someschema">
-		<Object>
-			<SourceInformation>
-				<Provider Name="Object Provider" Guid="{3CB2A168-FE19-4A4E-BDAD-DCF422F13473}"/>
-				<ObjectType>4663</ObjectType>
-			</SourceInformation>
-			<ObjectData>
-				<Data Name="ObjectId">ObjectA</Data>
-				<Data Name="ObjectName">ROFL</Data>
-			</ObjectData>
-		</Object>
-		<Object>
-			<SourceInformation>
-				<Provider Name="Object Provider" Guid="{3CB2A168-FE19-4A4E-BDAD-DCF422F13473}"/>
-				<ObjectType>4663</ObjectType>
-			</SourceInformation>
-			<ObjectData>
-				<Data Name="ObjectId">ObjectB</Data>
-				<Data Name="ObjectName">TASTIC</Data>
-			</ObjectData>
-		</Object>
-		<Object>
-			<SourceInformation>
-				<Provider Name="Object Provider" Guid="{3CB2A168-FE19-4A4E-BDAD-DCF422F13473}"/>
-				<ObjectType>4663</ObjectType>
-			</SourceInformation>
-			<ObjectData>
-				<Data Name="ObjectId">ObjectC</Data>
-				<Data Name="ObjectName">LMAO</Data>
-			</ObjectData>
-		</Object>
+		<Object id="ObjectA">ObjectA</Object>
+		<Object id="ObjectB">ObjectB</Object>
+		<Object id="ObjectC">ObjectC</Object>
 	</Objects>
 	`)
-	results := Find(doc, "//Objects/*[namespace-uri()=\"http://example.com/schema/2007/someschema\" and local-name()=\"Object\"]/ObjectData/Data[@Name=\"ObjectId\"]")
+	results := Find(doc, "//Objects/*[namespace-uri()=\"http://example.com/schema/2007/someschema\" and local-name()=\"Object\"]")
 	parsed := make([]string, 0, 5)
 	for _, tag := range results {
 		parsed = append(parsed, tag.InnerText() /*tag.SelectAttr("id")*/)
